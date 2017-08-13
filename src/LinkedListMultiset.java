@@ -23,7 +23,6 @@ public class LinkedListMultiset<T> extends Multiset<T>
 			currentNode=currentNode.getNext();
 		}
 		Node newNode=new Node(tail, currentNode, item, freq+1);
-		System.out.println("freq---"+(freq+1));
 		currentNode.setNext(newNode);
 	} // end of add()
 	
