@@ -4,9 +4,13 @@ import java.util.*;
 public class LinkedListMultiset<T> extends Multiset<T>
 {
 	Node head;
+	Node tail;
 	
 	public LinkedListMultiset() {
 		head=new Node(null, null, null, 0);
+		tail=new Node(null, null, null, 0);
+		head.setNext(tail);
+		tail.setPrev(head);
 	} // end of LinkedListMultiset()
 	
 	
@@ -15,10 +19,11 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		int freq=search(item);
 		Node currentNode=head;
 		//Traverse to end of list
-		while(currentNode.getNext()!=null){
+		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
 		}
-		Node newNode=new Node(null, currentNode, item, freq+1);
+		Node newNode=new Node(tail, currentNode, item, freq+1);
+		System.out.println("freq---"+(freq+1));
 		currentNode.setNext(newNode);
 	} // end of add()
 	
@@ -27,43 +32,58 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		Node currentNode=head;
 		int count=0;
 		//Traverse the list to find element
-		do{
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
 			if(currentNode.getElement()==item){
 				count++;
 			}
-			currentNode=currentNode.getNext();
 		}
-		while(currentNode.getNext()!=null);
 		return count;
 	} // end of add()
 	
 	
 	public void removeOne(T item) {
-		/*Node currentNode=head;
+		Node currentNode=head;
+		Node prev;
+		Node next;
 		//Traverse the list to find element
-		do{
-			if(currentNode.getElement()==item){
-				count++;
-			}
+		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item){
+				prev=currentNode.getPrev();
+				next=currentNode.getNext();
+				prev.setNext(next);
+				next.setPrev(prev);
+				return;
+			}
 		}
-		while(currentNode.getNext()!=null);*/
 	} // end of removeOne()
 	
 	
 	public void removeAll(T item) {
-		// Implement me!
+		Node currentNode=head;
+		Node prev;
+		Node next;
+		//Traverse the list to find element
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item){
+				prev=currentNode.getPrev();
+				next=currentNode.getNext();
+				prev.setNext(next);
+				next.setPrev(prev);
+			}
+		}
 	} // end of removeAll()
 	
 	
 	public void print(PrintStream out) {
 		Node currentNode=head;
 		//Traverse the list to print elements
-		do{
-			out.println(currentNode.getElement());
+		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
+			out.println(currentNode.getElement());
 		}
-		while(currentNode.getNext()!=null);
 	} // end of print()
 	
 	//Node Class
@@ -99,6 +119,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		public Node getPrev(){
 			return this.prev;
 		}
+		
 		//set Next Node
 		public void setNext(Node next){
 			this.next=next;
@@ -107,6 +128,16 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//set Previous Node
 		public void setPrev(Node prev){
 			this.prev=prev;
+		}
+		
+		//check if has Next Node
+		public boolean hasNext(){
+			return this.getNext()!=tail?true:false;
+		}
+						
+		//check if has Previous Node
+		public boolean hasPrev(){
+			return this.getPrev()!=tail?true:false;
 		}
 	}
 	
