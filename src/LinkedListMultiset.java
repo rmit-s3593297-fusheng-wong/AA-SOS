@@ -13,7 +13,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		tail.setPrev(head);
 	} // end of LinkedListMultiset()
 	
-	
+	/***Potential Bug -> Does not update Frequency of previously added elements***/
 	public void add(T item) {
 		//Get frequency of item
 		int freq=search(item);
@@ -82,6 +82,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
 			out.println(currentNode.getElement());
+			out.println(" ,freq- "+currentNode.getfreq());
 		}
 	} // end of print()
 	
@@ -136,7 +137,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 						
 		//check if has Previous Node
 		public boolean hasPrev(){
-			return this.getPrev()!=tail?true:false;
+			return this.getPrev()!=head?true:false;
 		}
 	}
 	
