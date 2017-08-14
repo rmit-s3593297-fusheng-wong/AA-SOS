@@ -17,13 +17,21 @@ public class LinkedListMultiset<T> extends Multiset<T>
 	public void add(T item) {
 		//Get frequency of item
 		int freq=search(item);
+		freq=freq+1;
+		ArrayList<Node> nodeList=new ArrayList<Node>();
 		Node currentNode=head;
 		//Traverse to end of list
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item){
+				nodeList.add(currentNode);
+			}
 		}
-		Node newNode=new Node(tail, currentNode, item, freq+1);
+		Node newNode=new Node(tail, currentNode, item, freq);
 		currentNode.setNext(newNode);
+		for(Node updateNode:nodeList){
+			updateNode.setfreq(freq);
+		}
 	} // end of add()
 	
 	
@@ -98,6 +106,11 @@ public class LinkedListMultiset<T> extends Multiset<T>
 			this.prev=prev;
 			this.element=element;
 			this.freq=freq;
+		}
+		
+		//set Frequency
+		public int setfreq(int freq){
+			return this.freq=freq;
 		}
 		
 		//get Frequency
