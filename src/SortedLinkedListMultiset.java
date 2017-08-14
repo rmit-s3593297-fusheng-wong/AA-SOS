@@ -1,7 +1,6 @@
 import java.io.PrintStream;
 import java.util.*;
 
-//import LinkedListMultiset.Node;
 
 public class SortedLinkedListMultiset<T extends Comparable<T>> extends Multiset<T> implements Comparator<T>
 {	
@@ -19,27 +18,47 @@ public class SortedLinkedListMultiset<T extends Comparable<T>> extends Multiset<
 	public void add(T item) {
 		//Get frequency of item
 		int freq=search(item);
+		freq=freq+1;
 		Node currentNode=head;
+		Boolean nodeInserted = false;
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
 			//if Item is greater then current Element then insert at previous node
+			System.out.println("item "+item);
 			System.out.println("currentNode.getElement() "+currentNode.getElement());
 			System.out.println("currentNode.getElement().compareTo(item) "+currentNode.getElement().compareTo(item));
-			if(currentNode.getElement().compareTo(item)==1){
+			if(currentNode.getElement().compareTo(item)==1 || currentNode.getElement().compareTo(item)==0){
+				System.out.println("InsideIF");
 				Node prev=currentNode.getPrev();
-				Node newNode=new Node(currentNode, prev, item, freq+1);
+				Node newNode=new Node(currentNode, prev, item, freq);
+				nodeInserted=true;
 				prev.setNext(newNode);
+				break;
 			}
 		}
 		//Boundary Conditions
 		if(currentNode==head){
-			//System.out.println("currentNode---"+currentNode);
+			System.out.println("currentNode36---"+currentNode);
 			Node newNode=new Node(tail, head, item, 1);
 			head.setNext(newNode);
 		}
-		else if(currentNode.getNext()==tail){
-			Node newNode=new Node(tail, currentNode, item, freq+1);
+		if(!nodeInserted){
+			System.out.println("currentNode41---"+currentNode);
+			Node newNode=new Node(tail, currentNode, item, freq);
 			currentNode.setNext(newNode);
+		}
+		//Update existing Nodes with Frequency
+		ArrayList<Node> nodeList=new ArrayList<Node>();
+		currentNode=head;
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
+			//if Item is greater then current Element then insert at previous node
+			if(currentNode.getElement().compareTo(item)==0){
+				nodeList.add(currentNode);
+			}
+		}
+		for(Node updateNode:nodeList){
+			updateNode.setFreq(freq);
 		}
 	} // end of add()
 	
@@ -70,8 +89,22 @@ public class SortedLinkedListMultiset<T extends Comparable<T>> extends Multiset<
 				next=currentNode.getNext();
 				prev.setNext(next);
 				next.setPrev(prev);
-				return;
+				break;
 			}
+		}
+		//Update Frequency in MultiSet
+		int freq=search(item);
+		currentNode=head;
+		ArrayList<Node> nodeList=new ArrayList<Node>();
+		//Traverse to end of list
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item){
+				nodeList.add(currentNode);
+			}
+		}
+		for(Node updateNode:nodeList){
+			updateNode.setFreq(freq);
 		}
 	} // end of removeOne()
 	
@@ -96,11 +129,11 @@ public class SortedLinkedListMultiset<T extends Comparable<T>> extends Multiset<
 	public void print(PrintStream out) {
 		Node currentNode=head;
 		//Traverse the list to print elements
-		System.out.print("print---");
+		System.out.println("print---");
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
 			out.println(currentNode.getElement());
-			//out.println(" ,freq- "+currentNode.getfreq());
+			out.println(" ,freq- "+currentNode.getFreq());
 		}
 	} // end of print()
 	
@@ -118,8 +151,13 @@ public class SortedLinkedListMultiset<T extends Comparable<T>> extends Multiset<
 			this.freq=freq;
 		}
 		
+		//set Frequency
+		public int setFreq(int freq){
+			return this.freq=freq;
+		}
+		
 		//get Frequency
-		public int getfreq(){
+		public int getFreq(){
 			return this.freq;
 		}
 				

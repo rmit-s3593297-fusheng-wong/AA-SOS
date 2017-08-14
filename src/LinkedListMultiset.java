@@ -30,7 +30,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		Node newNode=new Node(tail, currentNode, item, freq);
 		currentNode.setNext(newNode);
 		for(Node updateNode:nodeList){
-			updateNode.setfreq(freq);
+			updateNode.setFreq(freq);
 		}
 	} // end of add()
 	
@@ -61,8 +61,22 @@ public class LinkedListMultiset<T> extends Multiset<T>
 				next=currentNode.getNext();
 				prev.setNext(next);
 				next.setPrev(prev);
-				return;
+				break;
 			}
+		}
+		//Update Frequency in MultiSet
+		int freq=search(item);
+		currentNode=head;
+		ArrayList<Node> nodeList=new ArrayList<Node>();
+		//Traverse to end of list
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item){
+				nodeList.add(currentNode);
+			}
+		}
+		for(Node updateNode:nodeList){
+			updateNode.setFreq(freq);
 		}
 	} // end of removeOne()
 	
@@ -90,7 +104,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
 			out.println(currentNode.getElement());
-			out.println(" ,freq- "+currentNode.getfreq());
+			out.println(" ,freq- "+currentNode.getFreq());
 		}
 	} // end of print()
 	
@@ -109,12 +123,12 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		}
 		
 		//set Frequency
-		public int setfreq(int freq){
+		public int setFreq(int freq){
 			return this.freq=freq;
 		}
 		
 		//get Frequency
-		public int getfreq(){
+		public int getFreq(){
 			return this.freq;
 		}
 				
