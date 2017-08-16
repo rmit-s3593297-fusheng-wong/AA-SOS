@@ -29,9 +29,10 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		}
 		Node newNode=new Node(tail, currentNode, item, freq);
 		currentNode.setNext(newNode);
-		for(Node updateNode:nodeList){
+		/*for(Node updateNode:nodeList){
 			updateNode.setFreq(freq);
-		}
+		}*/
+		updateNode(item,freq);
 	} // end of add()
 	
 	
@@ -41,7 +42,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//Traverse the list to find element
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
+			if(currentNode.getElement()==item || currentNode.getElement().equals(item)){
 				count++;
 			}
 		}
@@ -61,7 +62,7 @@ public class LinkedListMultiset<T> extends Multiset<T>
 				next=currentNode.getNext();
 				prev.setNext(next);
 				next.setPrev(prev);
-				break;
+				//break;
 			}
 		}
 		//Update Frequency in MultiSet
@@ -75,9 +76,10 @@ public class LinkedListMultiset<T> extends Multiset<T>
 				nodeList.add(currentNode);
 			}
 		}
-		for(Node updateNode:nodeList){
+		/*for(Node updateNode:nodeList){
 			updateNode.setFreq(freq);
-		}
+		}*/
+		updateNode(item,freq);
 	} // end of removeOne()
 	
 	
@@ -103,10 +105,17 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//Traverse the list to print elements
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			out.println(currentNode.getElement());
-			out.println(" ,freq- "+currentNode.getFreq());
+			out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
 		}
 	} // end of print()
+	
+	public void updateNode(T item,int freq){
+		Node currentNode=head;
+		while(currentNode.hasNext()){
+			currentNode=currentNode.getNext();
+			if(currentNode.getElement()==item || currentNode.getElement().equals(item)){currentNode.setFreq(freq);}
+		}
+	}
 	
 	//Node Class
 	public class Node{
@@ -123,8 +132,8 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		}
 		
 		//set Frequency
-		public int setFreq(int freq){
-			return this.freq=freq;
+		public void setFreq(int freq){
+			this.freq=freq;
 		}
 		
 		//get Frequency
