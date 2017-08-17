@@ -1,7 +1,7 @@
 import java.io.PrintStream;
 import java.util.*;
 
-public class LinkedListMultiset<T> extends Multiset<T>
+public class LinkedListMultiset<T extends Comparable<T>> extends Multiset<T> implements Comparator<T>
 {
 	Node head;
 	Node tail;
@@ -13,39 +13,38 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		tail.setPrev(head);
 	} // end of LinkedListMultiset()
 	
-	/***Potential Bug -> Does not update Frequency of previously added elements***/
 	public void add(T item) {
 		//Get frequency of item
-		int freq=search(item);
-		freq=freq+1;
-		ArrayList<Node> nodeList=new ArrayList<Node>();
+		//int freq=search(item);
+		//freq=freq+1;
+		//ArrayList<Node> nodeList=new ArrayList<Node>();
 		Node currentNode=head;
+		Boolean flag=false;
 		//Traverse to end of list
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
-				nodeList.add(currentNode);
+			if(currentNode.getElement().compareTo(item)==0){
+				currentNode.setFreq(currentNode.getFreq()+1);
+				flag=true;
 			}
 		}
-		Node newNode=new Node(tail, currentNode, item, freq);
-		currentNode.setNext(newNode);
-		for(Node updateNode:nodeList){
-			updateNode.setFreq(freq);
+		if(!flag){
+			Node newNode=new Node(tail, currentNode, item, 1);
+			currentNode.setNext(newNode);
 		}
 	} // end of add()
 	
 	
 	public int search(T item) {
 		Node currentNode=head;
-		int count=0;
 		//Traverse the list to find element
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
-				count++;
+			if(currentNode.getElement().compareTo(item)==0){
+				return currentNode.getFreq();
 			}
 		}
-		return count;
+		return 0;
 	} // end of add()
 	
 	
@@ -56,27 +55,18 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//Traverse the list to find element
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
-				prev=currentNode.getPrev();
-				next=currentNode.getNext();
-				prev.setNext(next);
-				next.setPrev(prev);
-				break;
+			if(currentNode.getElement().compareTo(item)==0){
+				if(currentNode.getFreq()>1){
+					currentNode.setFreq(currentNode.getFreq()-1);
+				}
+				else{
+					prev=currentNode.getPrev();
+					next=currentNode.getNext();
+					prev.setNext(next);
+					next.setPrev(prev);
+				}
+				return;
 			}
-		}
-		//Update Frequency in MultiSet
-		int freq=search(item);
-		currentNode=head;
-		ArrayList<Node> nodeList=new ArrayList<Node>();
-		//Traverse to end of list
-		while(currentNode.hasNext()){
-			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
-				nodeList.add(currentNode);
-			}
-		}
-		for(Node updateNode:nodeList){
-			updateNode.setFreq(freq);
 		}
 	} // end of removeOne()
 	
@@ -88,11 +78,12 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//Traverse the list to find element
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			if(currentNode.getElement()==item){
+			if(currentNode.getElement().compareTo(item)==0){
 				prev=currentNode.getPrev();
 				next=currentNode.getNext();
 				prev.setNext(next);
 				next.setPrev(prev);
+				return;
 			}
 		}
 	} // end of removeAll()
@@ -103,11 +94,10 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		//Traverse the list to print elements
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
-			out.println(currentNode.getElement());
-			out.println(" ,freq- "+currentNode.getFreq());
+			out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
 		}
 	} // end of print()
-	
+		
 	//Node Class
 	public class Node{
 		private Node next;
@@ -123,8 +113,8 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		}
 		
 		//set Frequency
-		public int setFreq(int freq){
-			return this.freq=freq;
+		public void setFreq(int freq){
+			this.freq=freq;
 		}
 		
 		//get Frequency
@@ -166,6 +156,11 @@ public class LinkedListMultiset<T> extends Multiset<T>
 		public boolean hasPrev(){
 			return this.getPrev()!=head?true:false;
 		}
+	}
+
+	@Override
+	public int compare(T o1, T o2) {
+		return o1.compareTo(o2);
 	}
 	
 	
