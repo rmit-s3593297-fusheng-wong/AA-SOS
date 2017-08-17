@@ -14,24 +14,18 @@ public class LinkedListMultiset<T extends Comparable<T>> extends Multiset<T> imp
 	} // end of LinkedListMultiset()
 	
 	public void add(T item) {
-		//Get frequency of item
-		//int freq=search(item);
-		//freq=freq+1;
-		//ArrayList<Node> nodeList=new ArrayList<Node>();
 		Node currentNode=head;
-		Boolean flag=false;
 		//Traverse to end of list
 		while(currentNode.hasNext()){
 			currentNode=currentNode.getNext();
+			//if Item is equal then increase frequency
 			if(currentNode.getElement().compareTo(item)==0){
 				currentNode.setFreq(currentNode.getFreq()+1);
-				flag=true;
+				return;
 			}
 		}
-		if(!flag){
-			Node newNode=new Node(tail, currentNode, item, 1);
-			currentNode.setNext(newNode);
-		}
+		Node newNode=new Node(tail, currentNode, item, 1);
+		currentNode.setNext(newNode);
 	} // end of add()
 	
 	
