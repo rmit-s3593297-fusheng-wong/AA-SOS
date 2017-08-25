@@ -14,15 +14,13 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 		if(currentNode==root && currentNode.getElement()==null){
 			currentNode.setElement(item);
 			currentNode.setFreq(1);
-			System.out.println("rootAdd--");
 			return;
 		}
 		addTraverse(currentNode, item);
 		
 	} // end of add()
 	public void addTraverse(Node currentNode, T item){
-		System.out.println("CurrentNode.getElement()---"+currentNode.getElement());
-		System.out.println("item---"+item);
+		//System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
 		//if item is smaller than current Element
 		if(currentNode.getElement().compareTo(item)==1){
 			//if Node has left child - Recursive call
@@ -30,9 +28,9 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 				addTraverse(currentNode.getLeft(), item);
 			}// else Add new left child Node
 			else {
-				System.out.println("leftAdd--");
 				Node newNode=new Node(null, null, item, 1);
-				currentNode.setLeft(newNode); 
+				currentNode.setLeft(newNode);
+				return;
 			}
 		}//else if Node has right child - Recursive call
 		else if(currentNode.getElement().compareTo(item)==-1){
@@ -40,9 +38,9 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 				addTraverse(currentNode.getRight(), item);
 			}//else Add new right child Node
 			else {
-				System.out.println("rightAdd--");
 				Node newNode=new Node(null, null, item, 1);
-				currentNode.setRight(newNode); 
+				currentNode.setRight(newNode);
+				return;
 			}
 		}//else if item = element then freq + 1
 		else if(currentNode.getElement().compareTo(item)==0){
@@ -52,28 +50,205 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 	}
 	public int search(T item) {
 		Node currentNode=root;
+		
 		while(currentNode.hasLeft() || currentNode.hasRight()){
+			//System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+			//System.out.println("Left - "+currentNode.getLeft().getElement() + printDelim );
+			//System.out.println("Right - "+currentNode.getRight().getElement() + printDelim );
+			
 			if(currentNode.getElement().compareTo(item)==1){
+				//System.out.println("compare 1---");
 				currentNode=currentNode.getLeft();
 			}
 			else if(currentNode.getElement().compareTo(item)==-1){
+				//System.out.println("compare -1---");
 				currentNode=currentNode.getRight();
 			}
 			else if(currentNode.getElement().compareTo(item)==0){
+				//System.out.println("compare 0---");
 				return currentNode.getFreq();
 			}
+		}
+		//Check Leaf Node
+		if(currentNode.getElement().compareTo(item)==0){
+			return currentNode.getFreq();
 		}
 		return 0;
 	} // end of add()
 
 
 	public void removeOne(T item) {
-		// Implement me!
+		Node currentNode=root;
+		Node previousNode=null;
+		System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+		//Check case if only Root Node exists
+		if(currentNode.equals(root) && !currentNode.hasLeft() && !currentNode.hasRight()){
+			if(currentNode.getElement().compareTo(item)==0){
+				//Check if frequency > 1 then just decrease frequency
+				if(currentNode.getFreq()>1){
+					currentNode.setFreq(currentNode.getFreq()-1);
+					
+				}
+				else {
+					currentNode.setElement(null);
+					currentNode.setFreq(0);
+				}
+			}
+			return;
+		}
+		System.out.println("removeOne---");
+		while(currentNode.hasLeft() || currentNode.hasRight()){
+			//System.out.println("while---");
+			if(currentNode.getElement().compareTo(item)==1){
+				System.out.println("compare 1---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				previousNode=currentNode;
+				currentNode=currentNode.getLeft();
+			}
+			else if(currentNode.getElement().compareTo(item)==-1){
+				System.out.println("compare -1---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				previousNode=currentNode;
+				currentNode=currentNode.getRight();
+			}
+			else if(currentNode.getElement().compareTo(item)==0){
+				System.out.println("compare 0---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				//Check if frequency > 1 then just decrease frequency
+				if(currentNode.getFreq()>1){
+					currentNode.setFreq(currentNode.getFreq()-1);
+					
+				}//Otherwise ReOrder tree
+				else removeTraverse(previousNode,currentNode,item);
+				return;
+			}
+		}
+		//Check Leaf Node
+		if(currentNode.getElement().compareTo(item)==0){
+			//Check if frequency > 1 then just decrease frequency
+			if(currentNode.getFreq()>1){
+				currentNode.setFreq(currentNode.getFreq()-1);
+				
+			}//Otherwise ReOrder tree
+			else removeTraverse(previousNode,currentNode,item);
+		}
 	} // end of removeOne()
 	
+	public void removeTraverse(Node parentNode, Node removeNode,T item){
+		System.out.println("removeTraverse");
+		//Leaf Node
+		if(!removeNode.hasLeft() && !removeNode.hasRight()){
+			parentNode.setLeft(null);
+			parentNode.setRight(null);
+			return;
+		}
+		//If only Left Child
+		if(removeNode.hasLeft() && !removeNode.hasRight()){
+			if(removeNode!=root){
+				parentNode.setLeft(removeNode.getLeft());
+			}
+			else {
+				root=removeNode.getLeft();
+			}
+			return;
+		}//If only Right Child
+		else if(removeNode.hasRight() && !removeNode.hasLeft()){
+			if(!removeNode.equals(root)){
+				parentNode.setRight(removeNode.getRight());
+			}
+			else {
+				root=removeNode.getRight();
+			}
+			return;
+		}//If it has two children
+		else if(removeNode.hasLeft() && removeNode.hasRight()){
+			Node successorParentNode;
+			Node successorNode;
+			if(removeNode.getRight().hasLeft()){
+				successorParentNode=removeTraverseLeft(removeNode.getRight(), removeNode);
+				successorNode=successorParentNode.getLeft();
+			}
+			else {
+				successorParentNode=parentNode;
+				successorNode=removeNode.getRight();
+			}
+			//System.out.println(successorParentNode.getElement() + printDelim + successorParentNode.getFreq());
+			System.out.println(successorNode.getElement() + printDelim + successorNode.getFreq());
+			//Step 1 -> removeNode parent points to successor
+			if(!removeNode.equals(root)){
+				if(parentNode.getLeft()==removeNode){
+					parentNode.setLeft(successorNode);
+				}
+				else if(parentNode.getRight()==removeNode){
+					parentNode.setRight(successorNode);
+				}
+			}
+			else root=successorNode;	
+			//Step 2 -> Successor parent points to successor children
+			if(successorParentNode!=null){
+				if(successorNode.hasRight()){
+					successorParentNode.setLeft(successorNode.getRight());
+				}
+				else successorParentNode.setLeft(null);
+			}
+			//Step 3 -> Successor points to Node's children
+			successorNode.setLeft(removeNode.getLeft());
+			if(removeNode.getRight()!=successorNode){//Avoid loop to point to itself
+				successorNode.setRight(removeNode.getRight());
+			}
+			//Step 4 -> Node points to null (left & right)
+			removeNode.setLeft(null);
+			removeNode.setRight(null);
+			return;
+		}
+	}
+	
+	public Node removeTraverseLeft(Node currentNode, Node previousNode){
+		if(currentNode.hasLeft()){
+			previousNode=currentNode;
+			removeTraverseLeft(currentNode.getLeft(), previousNode);
+		}
+		return previousNode;
+	}
 	
 	public void removeAll(T item) {
-		// Implement me!
+		Node currentNode=root;
+		Node previousNode=null;
+		System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+		//Check case if only Root Node exists
+		if(currentNode.equals(root) && !currentNode.hasLeft() && !currentNode.hasRight()){
+			if(currentNode.getElement().compareTo(item)==0){
+					currentNode.setElement(null);
+					currentNode.setFreq(0);
+			}
+			return;
+		}
+		System.out.println("removeOne---");
+		while(currentNode.hasLeft() || currentNode.hasRight()){
+			//System.out.println("while---");
+			if(currentNode.getElement().compareTo(item)==1){
+				System.out.println("compare 1---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				previousNode=currentNode;
+				currentNode=currentNode.getLeft();
+			}
+			else if(currentNode.getElement().compareTo(item)==-1){
+				System.out.println("compare -1---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				previousNode=currentNode;
+				currentNode=currentNode.getRight();
+			}
+			else if(currentNode.getElement().compareTo(item)==0){
+				System.out.println("compare 0---");
+				System.out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+				removeTraverse(previousNode,currentNode,item);
+				return;
+			}
+		}
+		//Check Leaf Node
+		if(currentNode.getElement().compareTo(item)==0){
+			removeTraverse(previousNode,currentNode,item);
+		}
 	} // end of removeAll()
 
 
