@@ -17,6 +17,8 @@ public class mainClass {
 		multiSet.add(2);
 		System.out.println("Print MultiSet after Adding elements");
 		multiSet.print(System.out);
+		System.out.println("Search 5");
+		System.out.println(multiSet.search(5));
 		System.out.println("Remove 3");
 		multiSet.removeOne(3);
 		System.out.println("Removing 3");
