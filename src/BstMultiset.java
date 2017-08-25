@@ -172,8 +172,15 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 				successorParentNode=parentNode;
 				successorNode=removeNode.getRight();
 			}
-			//System.out.println(successorParentNode.getElement() + printDelim + successorParentNode.getFreq());
-			System.out.println(successorNode.getElement() + printDelim + successorNode.getFreq());
+			//Debug Statements
+			if(successorParentNode!=null){
+				System.out.println("successorParentNode "+successorParentNode.getElement() + printDelim + successorParentNode.getFreq());
+			}
+			System.out.println("successorNode "+successorNode.getElement() + printDelim + successorNode.getFreq());
+			if(parentNode!=null){
+				System.out.println("parentNode "+parentNode.getElement() + printDelim + parentNode.getFreq());
+			}
+			System.out.println("removeNode "+removeNode.getElement() + printDelim + removeNode.getFreq());
 			//Step 1 -> removeNode parent points to successor
 			if(!removeNode.equals(root)){
 				if(parentNode.getLeft()==removeNode){
@@ -254,14 +261,16 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 
 	public void print(PrintStream out) {
 		Node currentNode=root;
+		System.out.println("root "+currentNode.getElement() + printDelim + currentNode.getFreq());
 		printTraverse(currentNode, out);
 	} // end of print()
 	
 	public void printTraverse(Node currentNode, PrintStream out){
+		out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
 		if(currentNode.hasLeft()){
 			printTraverse(currentNode.getLeft(), out);
 		}
-		out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+		//out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
 		if(currentNode.hasRight()){
 			printTraverse(currentNode.getRight(), out);
 		}
