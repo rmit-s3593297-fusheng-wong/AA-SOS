@@ -17,11 +17,11 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 			return;
 		}
 		addTraverse(currentNode, item);
-		
 	} // end of add()
+	
 	public void addTraverse(Node currentNode, T item){
 		//if item is smaller than current Element
-		if(currentNode.getElement().compareTo(item)==1){
+		if(currentNode.getElement().compareTo(item)>0){
 			//if Node has left child - Recursive call
 			if(currentNode.hasLeft()){
 				addTraverse(currentNode.getLeft(), item);
@@ -32,7 +32,7 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 				return;
 			}
 		}//else if Node has right child - Recursive call
-		else if(currentNode.getElement().compareTo(item)==-1){
+		else if(currentNode.getElement().compareTo(item)<0){
 			if(currentNode.hasRight()){
 				addTraverse(currentNode.getRight(), item);
 			}//else Add new right child Node
@@ -47,27 +47,29 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 			return;
 		}
 	}
+	
 	public int search(T item) {
 		Node currentNode=root;
-		//Binary Search
-		while(currentNode.hasLeft() || currentNode.hasRight()){
-			if(currentNode.getElement().compareTo(item)==1){
-				currentNode=currentNode.getLeft();
+		return searchTraverse(currentNode, item);
+	} // end of search()
+	
+	public int searchTraverse(Node currentNode, T item){
+		if(currentNode.getElement().compareTo(item)>0){
+			//if Node has left child - Recursive call
+			if(currentNode.hasLeft()){
+				searchTraverse(currentNode.getLeft(), item);
 			}
-			else if(currentNode.getElement().compareTo(item)==-1){
-				currentNode=currentNode.getRight();
+		}//else if Node has right child - Recursive call
+		else if(currentNode.getElement().compareTo(item)<0){
+			if(currentNode.hasRight()){
+				searchTraverse(currentNode.getRight(), item);
 			}
-			else if(currentNode.getElement().compareTo(item)==0){
-				return currentNode.getFreq();
-			}
-		}
-		//Check Leaf Node OR Root Node
-		if(currentNode.getElement().compareTo(item)==0){
+		}//else if item = element then freq + 1
+		else if(currentNode.getElement().compareTo(item)==0){
 			return currentNode.getFreq();
 		}
 		return 0;
-	} // end of add()
-
+	}
 
 	public void removeOne(T item) {
 		Node currentNode=root;
@@ -87,11 +89,11 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 			return;
 		}//Check all internal Nodes
 		while(currentNode.hasLeft() || currentNode.hasRight()){
-			if(currentNode.getElement().compareTo(item)==1){
+			if(currentNode.getElement().compareTo(item)>0){
 				previousNode=currentNode;
 				currentNode=currentNode.getLeft();
 			}
-			else if(currentNode.getElement().compareTo(item)==-1){
+			else if(currentNode.getElement().compareTo(item)<0){
 				previousNode=currentNode;
 				currentNode=currentNode.getRight();
 			}
@@ -206,11 +208,11 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 			return;
 		}//Check all internal Nodes
 		while(currentNode.hasLeft() || currentNode.hasRight()){
-			if(currentNode.getElement().compareTo(item)==1){
+			if(currentNode.getElement().compareTo(item)>0){
 				previousNode=currentNode;
 				currentNode=currentNode.getLeft();
 			}
-			else if(currentNode.getElement().compareTo(item)==-1){
+			else if(currentNode.getElement().compareTo(item)<0){
 				previousNode=currentNode;
 				currentNode=currentNode.getRight();
 			}
@@ -236,6 +238,7 @@ public class BstMultiset<T extends Comparable<T>> extends Multiset<T> implements
 			printTraverse(currentNode.getLeft(), out);
 		}
 		out.println(currentNode.getElement() + printDelim + currentNode.getFreq());
+		
 		if(currentNode.hasRight()){
 			printTraverse(currentNode.getRight(), out);
 		}
