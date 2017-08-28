@@ -89,7 +89,13 @@ public class MultisetTester
 			lineNum++;
 		}
 
-	} // end of processOperations() 
+	} // end of processOperations()
+	
+	public static String randomizer() {
+		Integer randomInt = new Random().nextInt(10000);
+		String randomString = randomInt.toString();
+		return randomString;
+	}
 
 
 	/**
@@ -100,26 +106,42 @@ public class MultisetTester
 		// construct in and output streams/writers/readers, then process each operation.
 		try {
 			//generate random
-			int inputSize = 100000;
-			int dataSize = 100000;
+			//int[] dataSize = {1000000,100,1000,10000,100000,1000000};
+			int[] dataSize = {1000,1000,1000,1000,1000,1000};
+			//int[] inputSize = {1000,1000,1000,1000,1000,1000};
+			int[] inputSize = {1000000,100,1000,10000,100000,1000000};
 			String newRow = "";
+			String randomInput = "";
+			
+			
 			
 			//this is preloaded before actions
-			String[] dataList = new String[dataSize];
-			String[] dataValues = {"EIGHT","FIVE","FOUR","NINE","ONE","SEVEN","SIX","TEN","THREE","TWO"};
-					
+			//String[] dataValues = {"EIGHT","FIVE","FOUR","NINE","ONE","SEVEN","SIX","TEN","THREE","TWO"};
+			String[] dataValues = new String[100];
+			for(Integer generator=0; generator < 100 ;generator++) {
+				dataValues[generator] = generator.toString();
+			}
+			
 			//this is the set of actions onto preloaded data
-			String[] inputList = new String[inputSize];
-			String[] inputTypes = {"A","A","A","RO","S","S","S"};
-			String[] inputValues = {"EIGHT","FIVE","FOUR","NINE","ONE","SEVEN","SIX","TEN","THREE","TWO","RANDOM"};
+			
+			
+			String[] inputDummy = {"A","S"};
+			String[] inputTypes1 = {"A","A","A","A","A","A","A","A","A","A","S"};
+			String[] inputTypes2 = {"A","A","A","A","A","S"};
+			String[] inputTypes3 = {"A","S"};
+			String[] inputTypes4 = {"A","S","S","S","S","S"};
+			String[] inputTypes5 = {"A","S","S","S","S","S","S","S","S","S","S"};
+			//String[] [] inputTypes = {inputDummy,inputTypes1,inputTypes2,inputTypes3,inputTypes4,inputTypes5};
+			String[] [] inputTypes = {inputDummy,inputTypes3,inputTypes3,inputTypes3,inputTypes3,inputTypes3};
+			//String[] inputValues = {"EIGHT","FIVE","FOUR","NINE","ONE","SEVEN","SIX","TEN","THREE","TWO"};
+			String[] inputValues = new String[101];
+			for(Integer generator=0; generator < 101 ;generator++) {
+				inputValues[generator] = generator.toString();
+			}
 			//sorted array
 			int i=0;
 	
-			Multiset<String> multiset = new LinkedListMultiset<String>();
-			Multiset<String> multiset2 = new SortedLinkedListMultiset<String>();
-			Multiset<String> multiset3 = new LinkedListMultiset<String>();
-			Multiset<String> multiset4 = new HashMultiset<String>();
-			Multiset<String> multiset5 = new BalTreeMultiset<String>();
+			
 			double averageLL=0;
 			double averageSLL=0;
 			double averageBST=0;
@@ -127,44 +149,89 @@ public class MultisetTester
 			double averageBAL=0;
 			double estimatedTime;
 			
+			//System.out.println(averageLL);
+			
 			long startTime;
 			long endTime;
-			for(int tries=0; tries<10; tries++) {
+			int totalTries = 20;
+			for(int ratios=0; ratios<6; ratios++) {
+				averageLL=0;
+				averageSLL=0;
+				averageBST=0;
+				averageHM=0;
+				averageBAL=0;
+				//System.out.println(dataSize[ratios]);
+				
+				for(int tries=0; tries<totalTries; tries++) {
 				i=0;
+				
 				//generate data
+				//dummy is because the program starts up slowly for some reason skewing the data
+				Multiset<String> dummyset = new LinkedListMultiset<String>();
+				Multiset<String> multiset = new LinkedListMultiset<String>();
+				Multiset<String> multiset2 = new SortedLinkedListMultiset<String>();
+				Multiset<String> multiset3 = new BstMultiset<String>();
+				Multiset<String> multiset4 = new HashMultiset<String>();
+				Multiset<String> multiset5 = new BalTreeMultiset<String>();
+				
+				String[] dataList = new String[dataSize[ratios]];
+				for(int d=0; d<dataSize[ratios]; d++) {
+					newRow = "A ";
+					newRow += dataValues[new Random().nextInt(dataValues.length)];
+					dataList[d] = newRow;
+				}
+				
+				if(tries==0) {processOperations(dummyset, dataList);}
+				processOperations(multiset, dataList);
+				processOperations(multiset2, dataList);
+				processOperations(multiset3, dataList);
+				processOperations(multiset4, dataList);
+				processOperations(multiset5, dataList);
+				//generate data end
+				
+				
+				
+				//generate scenario
+				String[] inputList = new String[inputSize[ratios]];
 				//generate random start
-				/*for(i=0; i<inputSize; i++) {
-					newRow = inputTypes[new Random().nextInt(inputTypes.length)]+" ";
-					newRow += inputValues[new Random().nextInt(inputValues.length)];
+				for(i=0; i<inputSize[ratios]; i++) {
+					newRow = inputTypes[ratios][new Random().nextInt(inputTypes[ratios].length)]+" ";
+					randomInput = inputValues[new Random().nextInt(inputValues.length)];
+					if(randomInput == "100") {
+						newRow += randomizer();
+					}else {
+						newRow += randomInput;
+					}
+					
 					inputList[i] = newRow;
 					//System.out.println (newRow);
-				}*/
+				}
 				//generate random end
 			
 				//comment out the one that is not being used
 				//generate fixed set start
 				//generate forward sort
-					for(int out=0;out<10;out++) {
+			/*		for(int out=0;out<10;out++) {
 				//generate forward sort end
 					
 				//generate backward sort
 					//for(int out=9;out>=0;out--) {
 				//generate backward sort end
 						//the -1 here is for the search at the end
-						for(int in=0;in<((inputSize/10)-1);in++) {
+						for(int in=0;in<((inputSize/10)*.9);in++) {
 							if(in <= (inputSize/10)*.6) {
 								//add first 7
-								newRow = inputTypes[0]+" ";
+								newRow = "A ";
 								newRow += inputValues[out];
 								inputList[i] = newRow;
-								//System.out.println (newRow + " 1 " + i);
+								System.out.println (newRow + " 1 " + i);
 								i++;
-							}else if(in > (inputSize/10)*.6 && in <= (inputSize/10)-1) {
+							}else if(in > (inputSize/10)*.6 && in <= (inputSize/10)*.9) {
 								//remove next 2
-								newRow = inputTypes[3]+" ";
+								newRow = "R ";
 								newRow += inputValues[out];
 								inputList[i] = newRow;
-								//System.out.println (newRow + " 2 " + i);
+								System.out.println (newRow + " 2 " + i);
 								i++;
 							}else {
 								//no print
@@ -172,57 +239,71 @@ public class MultisetTester
 						}
 					}
 					//search
-					for(int search=0;search<10;search++) {
+					for(int search=0;search<(inputSize/10);search++) {
 						//the -1 here is for the search at the end
-						newRow = inputTypes[4]+" ";
+						newRow = "S ";
 						newRow += inputValues[search];
 						inputList[i] = newRow;
-						//System.out.println (newRow + " 3 " + i);
+						System.out.println (newRow + " 3 " + i);
 						i++;
 					}
 				//generate fixed set end
-				
+			*/	
 				//process the operations
+				//only needed on the first round
+				if(tries==0) {processOperations(dummyset, inputList);}	
+					
 				startTime = System.nanoTime();
 				processOperations(multiset4, inputList);
 				endTime = System.nanoTime() ;
 				estimatedTime = ((double)(endTime - startTime)) / Math.pow ( 10 , 9 ) ;
 				averageHM += estimatedTime;
-				System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
+				//System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
 				
 				startTime = System.nanoTime();
 				processOperations(multiset5, inputList);
 				endTime = System.nanoTime() ;
 				estimatedTime = ((double)(endTime - startTime)) / Math.pow ( 10 , 9 ) ;
 				averageBAL += estimatedTime;
-				System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
+				//System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
 				
 				startTime = System.nanoTime();
 				processOperations(multiset, inputList);
 				endTime = System.nanoTime() ;
 				estimatedTime = ((double)(endTime - startTime)) / Math.pow ( 10 , 9 ) ;
 				averageLL += estimatedTime;
-				System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
+				//System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
 				
 				startTime = System.nanoTime();
 				processOperations(multiset2, inputList);
 				endTime = System.nanoTime() ;
 				estimatedTime = ((double)(endTime - startTime)) / Math.pow ( 10 , 9 ) ;
 				averageSLL += estimatedTime;
-				System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
+				//System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
 				
-				/*startTime = System.nanoTime();
+				startTime = System.nanoTime();
 				processOperations(multiset3, inputList);
 				endTime = System.nanoTime() ;
 				estimatedTime = ((double)(endTime - startTime)) / Math.pow ( 10 , 9 ) ;
-				averageBST += estimatedTime;*/
+				averageBST += estimatedTime;
 				//System.out.println ( "time taken = " + estimatedTime + " sec " ) ;
 			}
-			System.out.println ( "Average LL time taken = " + averageLL/100 + " sec " ) ;
-			System.out.println ( "Average SLL time taken = " + averageSLL/100 + " sec " ) ;
-			//System.out.println ( "Average BST time taken = " + averageBST/100 + " sec " ) ;
-			System.out.println ( "Average HM time taken = " + averageHM/100 + " sec " ) ;
-			System.out.println ( "Average BAL time taken = " + averageBAL/100 + " sec " ) ;
+			/*System.out.println ( "Average LL time taken = " + averageLL/totalTries + " sec " ) ;
+			System.out.println ( "Average SLL time taken = " + averageSLL/totalTries + " sec " ) ;
+			System.out.println ( "Average BST time taken = " + averageBST/totalTries + " sec " ) ;
+			System.out.println ( "Average HM time taken = " + averageHM/totalTries + " sec " ) ;
+			System.out.println ( "Average BAL time taken = " + averageBAL/totalTries + " sec " ) ;*/
+			if(ratios!=1) {
+				System.out.println (averageLL/totalTries) ;
+				System.out.println (averageSLL/totalTries) ;
+				System.out.println (averageBST/totalTries) ;
+				System.out.println (averageHM/totalTries) ;
+				System.out.println (averageBAL/totalTries) ;
+				System.out.println (" ") ;
+			}
+			
+			}
+			
 			
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
