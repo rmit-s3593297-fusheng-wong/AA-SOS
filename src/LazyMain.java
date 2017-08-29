@@ -15,25 +15,6 @@ public class MultisetTester
 	/** Standard outstream. */
 	protected static final PrintStream outStream = System.out;
 
-	/**
-	 * Print help/usage message.
-	 */
-	public static void usage(String progName) {
-		System.err.println(progName + ": <implementation> [fileName to output search results to]");
-		System.err.println("<implementation> = <linkedlist | sortedlinkedlist | bst| hash | baltree>");
-		System.exit(1);
-	} // end of usage
-
-
-	/**
-	 * Process the operation commands coming from inReader, and updates the multiset according to the operations.
-	 * 
-	 * @param inReader Input reader where the operation commands are coming from.
-	 * @param searchOutWriter Where to output the results of search.
-	 * @param multiset The multiset which the operations are executed on.
-	 * 
-	 * @throws IOException If there is an exception to do with I/O.
-	 */
 	public static void processOperations(Multiset<String> multiset, String[] inputList) 
 		throws IOException
 	{
@@ -106,10 +87,12 @@ public class MultisetTester
 		// construct in and output streams/writers/readers, then process each operation.
 		try {
 			//generate random
+			
+			//only one of the 3 should be variable at one time
 			//int[] dataSize = {1000000,100,1000,10000,100000,1000000};
-			int[] dataSize = {1000,1000,1000,1000,1000,1000};
-			//int[] inputSize = {1000,1000,1000,1000,1000,1000};
-			int[] inputSize = {1000000,100,1000,10000,100000,1000000};
+			int[] dataSize = {100,100,100,100,100,100};
+			int[] inputSize = {1000,1000,1000,1000,1000,1000};
+			//int[] inputSize = {1000000,100,1000,10000,100000,1000000};
 			String newRow = "";
 			String randomInput = "";
 			
@@ -125,14 +108,14 @@ public class MultisetTester
 			//this is the set of actions onto preloaded data
 			
 			
-			String[] inputDummy = {"A","S"};
-			String[] inputTypes1 = {"A","A","A","A","A","A","A","A","A","A","S"};
-			String[] inputTypes2 = {"A","A","A","A","A","S"};
-			String[] inputTypes3 = {"A","S"};
-			String[] inputTypes4 = {"A","S","S","S","S","S"};
-			String[] inputTypes5 = {"A","S","S","S","S","S","S","S","S","S","S"};
-			//String[] [] inputTypes = {inputDummy,inputTypes1,inputTypes2,inputTypes3,inputTypes4,inputTypes5};
-			String[] [] inputTypes = {inputDummy,inputTypes3,inputTypes3,inputTypes3,inputTypes3,inputTypes3};
+			String[] inputDummy = {"A","RO","S"};
+			String[] inputTypes1 = {"A","A","A","A","A","A","A","A","A","A","RO","S"};
+			String[] inputTypes2 = {"A","A","A","A","A","RO","S"};
+			String[] inputTypes3 = {"A","RO","S"};
+			String[] inputTypes4 = {"A","RO","S","S","S","S","S"};
+			String[] inputTypes5 = {"A","RO","S","S","S","S","S","S","S","S","S","S"};
+			String[] [] inputTypes = {inputDummy,inputTypes1,inputTypes2,inputTypes3,inputTypes4,inputTypes5};
+			//String[] [] inputTypes = {inputDummy,inputTypes3,inputTypes3,inputTypes3,inputTypes3,inputTypes3};
 			//String[] inputValues = {"EIGHT","FIVE","FOUR","NINE","ONE","SEVEN","SIX","TEN","THREE","TWO"};
 			String[] inputValues = new String[101];
 			for(Integer generator=0; generator < 101 ;generator++) {
@@ -148,8 +131,6 @@ public class MultisetTester
 			double averageHM=0;
 			double averageBAL=0;
 			double estimatedTime;
-			
-			//System.out.println(averageLL);
 			
 			long startTime;
 			long endTime;
@@ -251,6 +232,7 @@ public class MultisetTester
 			*/	
 				//process the operations
 				//only needed on the first round
+				//java compiler issue maybe, slow on first run
 				if(tries==0) {processOperations(dummyset, inputList);}	
 					
 				startTime = System.nanoTime();
